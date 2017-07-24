@@ -1,12 +1,5 @@
 var db = require("./db.js");
 var graphql = require('graphql');
-// import {
-//   GraphQLSchema,
-//   GraphQLObjectType,
-//   GraphQLString,
-//   GraphQLInt,
-//   GraphQLNonNull
-// } from 'graphql';
 var Person = new graphql.GraphQLObjectType({
     name: "Person",
     fields: ()=>({
@@ -31,8 +24,24 @@ var GraphQuery = new graphql.GraphQLObjectType({
                     type: new graphql.GraphQLNonNull(graphql.GraphQLInt)
                 }
             },
-            resolve(parent, {id}) {
-                return db.getPersonDetail(id);
+            resolve(parent, params, option) {
+                return db.getPersonDetail(params.id);
+            }
+        },
+        create: {
+            type: Person,
+            args: {
+                name: {
+                    type: graphql.GraphQLString
+                },
+                age: {
+                    type: graphql.GraphQLInt
+                }
+            },
+            resolve(parent, params, option) {
+                console.log(params);
+                console.log(option);
+                return db.createPerson(params.name, params.age);
             }
         }
     })
